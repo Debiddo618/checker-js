@@ -1,1 +1,1 @@
-# chess-js
+# checker-js
