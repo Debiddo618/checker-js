@@ -1,23 +1,38 @@
 const checkerBoardEl = document.querySelector(".checker-board");
-const message = document.querySelector("#message");
+const messageEl = document.querySelector("#message");
 
-let turn = -1;
+const checkerCellEl = [];
+
+let turn;
+let message;
 let selectedPiece;
 let moves = [];
+let checkerBoard;
 
-let checkerBoard = [
-  [0, -1, 0, -1, 0, -1, 0, -1],
-  [-1, 0, -1, 0, -1, 0, -1, 0],
-  [0, -1, 0, -1, 0, -1, 0, -1],
-  [0, 0, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 0, 0, 0],
-  [1, 0, 1, 0, 1, 0, 1, 0],
-  [0, 1, 0, 1, 0, 1, 0, 1],
-  [1, 0, 1, 0, 1, 0, 1, 0],
-];
+// initialize the board
+function init() {
+  checkerBoard = [
+    [0, -1, 0, -1, 0, -1, 0, -1],
+    [-1, 0, -1, 0, -1, 0, -1, 0],
+    [0, -1, 0, -1, 0, -1, 0, -1],
+    [0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0],
+    [1, 0, 1, 0, 1, 0, 1, 0],
+    [0, 1, 0, 1, 0, 1, 0, 1],
+    [1, 0, 1, 0, 1, 0, 1, 0],
+  ];
+  turn = 1;
+  render();
+}
 
-// initialize the checkerBoard
-function renderBoard(checkerBoard) {
+// render the initial board
+function render() {
+  updateBoard();
+  // updateMessage();
+}
+
+// update the board
+function updateBoard() {
   checkerBoardEl.innerHTML = "";
   for (let i = 0; i < checkerBoard.length; i++) {
     for (let j = 0; j < checkerBoard[0].length; j++) {
@@ -52,43 +67,79 @@ function renderBoard(checkerBoard) {
       }
       checkerCell.dataset.row = i;
       checkerCell.dataset.col = j;
+      checkerCell.id = `${i}` + `${j}`;
 
       checkerPiece.dataset.row = i;
       checkerPiece.dataset.col = j;
-      // checkerCell.id = `${i}` + `${j}`;
-      // checkerPiece.id = `${i}` + `${j}`;
 
       checkerCell.addEventListener("click", handleClick);
+      checkerCellEl.push(checkerCell);
       checkerBoardEl.append(checkerCell);
     }
   }
 }
 
-renderBoard(checkerBoard);
-
 function handleClick(event) {
   // console.log(event.target.dataset.row);
   // console.log(event.target.dataset.col);
   // console.log(event.target.dataset);
-  // console.warn(event.target);
+  console.warn(event.target);
   findAvailiableMoves(event.target);
 }
 
 // takes in a piece and return availiable moves
 function findAvailiableMoves(piece) {
-  console.log(piece);
+  let moves = [];
+  // console.log(piece);
   if (piece.dataset.player === "0") {
     // console.log("It is a blank space");
+    // console.log(`The row: ${piece.dataset.row} col:${piece.dataset.col}`);
+    // let coordinates = { row: piece.dataset.row, col: piece.dataset.col };
+    // console.log(checkInBound(coordinates));
   } else if (piece.dataset.player === "1") {
     console.log("white piece");
+    let leftMove = {
+      row: Number(piece.dataset.row) - 1,
+      col: Number(piece.dataset.col) - 1,
+    };
+    let rightMove = {
+      row: Number(piece.dataset.row) - 1,
+      col: Number(piece.dataset.col) + 1,
+    };
+    // console.warn(leftMove);
+    // console.error(rightMove);
+    if (checkInBound(leftMove)) {
+      moves.push(leftMove);
+    }
+    if (checkInBound(rightMove)) {
+      moves.push(rightMove);
+    }
+    console.log(checkInBound(rightMove));
   } else {
     if (piece.dataset.player === "-1") {
       // console.log("red piece");
+      let leftMove = {
+        row: Number(piece.dataset.row) + 1,
+        col: Number(piece.dataset.col) - 1,
+      };
+      let rightMove = {
+        row: Number(piece.dataset.row) + 1,
+        col: Number(piece.dataset.col) + 1,
+      };
+      // console.warn(leftMove);
+      // console.error(rightMove);
+      if (checkInBound(leftMove)) {
+        moves.push(leftMove);
+      }
+      if (checkInBound(rightMove)) {
+        moves.push(rightMove);
+      }
+      console.log(checkInBound(rightMove));
     }
   }
 }
 
-// check if coordinate object is inbound
+// check if coordinate object is inbound. True if inside the board
 function checkInBound(coordinate) {
   // coordinate = {row,col}
   if (
@@ -102,7 +153,22 @@ function checkInBound(coordinate) {
   return true;
 }
 
-
-// 1. click a cell
-// 2. click  another cell
-// 3. move the first cell to the second cell
+//check if coordinate object is occupied. True if occupied
+function checkOccupied(coordinate) {
+  // {row:1,col:2} => 12
+  let coordinateId = `${coordinate.row}` + `${coordinate.col}`;
+  let checkerCell = document.getElementById(coordinateId);
+  // console.log(checkerCell);
+  if (checkerCell.classList.contains("occupied")) {
+    // console.log("occupied");
+    return true;
+  } else {
+    if (checkerCell.classList.contains("unoccupied")) {
+      // console.log("unoccupied");
+      return false;
+    }
+  }
+}
+// let testCoordinate = { row: 1, col: 2 };
+// console.log(checkOccupied(testCoordinate));
+init();
