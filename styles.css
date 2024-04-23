@@ -14,7 +14,7 @@ body{
     display: flex;
     flex-wrap: wrap;
     border: 2px solid black;
-    width: 50%;
+    width: 30%;
     aspect-ratio: 1/1;
     justify-content: center;
     align-content: center;
@@ -23,6 +23,10 @@ body{
     border: 2px solid black;
     width: calc(100%/8);
     aspect-ratio: 1/1;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .black{
@@ -33,15 +37,17 @@ body{
 }
 
 .checker-piece.red{
-    width:100%;
+    width: 100%;
     height:100%;
     background-color: red;
     border-radius: 50%;
+    pointer-events: none;
 }
 
 .checker-piece.white{
-    width:100%;
+    width: 100%;
     height:100%;
     background-color: white;
     border-radius: 50%;
+    pointer-events: none;
 }
