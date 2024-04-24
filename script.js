@@ -54,12 +54,23 @@ function render() {
 }
 
 // update message
-function updateMessage(){
-  if(turn===1){
+function updateMessage() {
+  if (turn === 1) {
     messageEl.innerText = "Turn of Player 1";
-  }else{
-    if(turn===2){
+  } else {
+    if (turn === 2) {
       messageEl.innerText = "Turn of Player 2";
+    }
+  }
+}
+
+// switch player
+function switchPlayer() {
+  if (turn === 1) {
+    turn = 2;
+  } else {
+    if (turn === 2) {
+      turn = 1;
     }
   }
 }
@@ -115,14 +126,23 @@ function updateBoard() {
 // handle click
 function handleClick(event) {
   // console.warn(event.target);
-  console.log("/////////////");
-  console.log(findFreeSpaces(event.target));
-  console.log("/////////////");
+  movePiece(event.target, { row: 4, col: 4 });
+  updateBoard();
+  // console.log("/////////////");
+  // console.log(findFreeSpaces(event.target));
+  // console.log("/////////////");
 }
 
-// move a piece
+// move a piece to location
 function movePiece(piece, location) {
-  return;
+  // console.log(piece);
+  // console.log(location);
+  if (piece.dataset.player === "1" || piece.dataset.player === "2") {
+    console.log(checkerBoard);
+    checkerBoard[piece.dataset.row][piece.dataset.col] = 0;
+    checkerBoard[location.row][location.col] = Number(piece.dataset.player);
+    console.error(checkerBoard);
+  }
 }
 
 // takes in a piece(checker-cell) and return availiable moves
