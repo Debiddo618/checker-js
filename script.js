@@ -24,16 +24,16 @@ function init() {
     [0, 1, 0, 1, 0, 1, 0, 1],
     [1, 0, 1, 0, 1, 0, 1, 0],
   ];
-  checkerBoard = [
-    [0, 2, 0, 2, 0, 2, 0, 2],
-    [2, 0, 2, 0, 2, 0, 2, 0],
-    [0, 2, 0, 2, 0, 2, 0, 2],
-    [0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 1, 0, 1, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0],
-  ];
+  // checkerBoard = [
+  //   [0, 2, 0, 2, 0, 2, 0, 2],
+  //   [2, 0, 2, 0, 2, 0, 2, 0],
+  //   [0, 2, 0, 2, 0, 2, 0, 2],
+  //   [0, 0, 0, 0, 0, 0, 0, 0],
+  //   [0, 0, 0, 1, 0, 1, 0, 0],
+  //   [0, 0, 0, 0, 0, 0, 0, 0],
+  //   [0, 0, 0, 0, 0, 0, 0, 0],
+  //   [0, 0, 0, 0, 0, 0, 0, 0],
+  // ];
   // checkerBoard = [
   //   [0, 0, 0, 0, 0, 0, 0, 0],
   //   [0, 0, 0, 0, 0, 0, 0, 0],
@@ -47,12 +47,12 @@ function init() {
   // checkerBoard = [
   //   [0, 0, 0, 0, 0, 0, 0, 0],
   //   [0, 0, 0, 0, 0, 0, 0, 0],
-  //   [0, 0, 0, 0, 0, 0, 0, 0],
+  //   [0, 0, 0, 1, 0, 0, 0, 0],
   //   [0, 0, 0, 0, 0, 0, 0, 0],
   //   [0, 0, 0, 2, 0, 0, 0, 0],
-  //   [1, 0, 1, 0, 1, 0, 1, 0],
-  //   [0, 1, 0, 1, 0, 1, 0, 1],
-  //   [1, 0, 1, 0, 1, 0, 1, 0],
+  //   [0, 0, 0, 0, 0, 0, 0, 0],
+  //   [0, 0, 0, 0, 0, 2, 0, 0],
+  //   [0, 0, 0, 0, 0, 0, 0, 0],
   // ];
   message = "Turn of Player 1";
   winner = false;
@@ -68,13 +68,6 @@ function render() {
 
 // update message
 function updateMessage() {
-  // if (turn === 1) {
-  //   messageEl.innerText = "Turn of Player 1";
-  // } else {
-  //   if (turn === 2) {
-  //     messageEl.innerText = "Turn of Player 2";
-  //   }
-  // }
   messageEl.innerText = message;
 }
 
@@ -177,29 +170,52 @@ function handleClick(event) {
 // check win
 function checkWin() {
   // player have no more pieces
-  let whitePieces = 0;
-  let redPieces = 0;
-  checkerBoard.forEach((row) => {
-    if (row.some((item) => item === 1)) {
-      whitePieces++;
-    }
-    if (row.some((item) => item === 2)) {
-      redPieces++;
-    }
+  const whitePieceEl = document.querySelectorAll(".checker-piece.white");
+  const redPieceEl = document.querySelectorAll(".checker-piece.red");
+  let whiteMoves = 0;
+  let redMoves = 0;
+
+  // player runs out of moves
+  whitePieceEl.forEach((piece) => {
+    let moves = findFreeSpaces(piece.parentNode);
+    whiteMoves += moves.move.length + moves.attack.length;
+    console.log("White Moves: ", whiteMoves);
   });
 
-  if (redPieces === 0) {
+  // player runs out of moves
+  redPieceEl.forEach((piece) => {
+    let moves = findFreeSpaces(piece.parentNode);
+    redMoves += moves.move.length + moves.attack.length;
+    console.log("red Moves: ", redMoves);
+  });
+
+  if (redPieceEl.length === 0) {
     console.log("red lose");
     message = "Player 1 Won!";
     winner = true;
+    return;
   } else {
-    if (whitePieces === 0) {
+    if (whitePieceEl.length === 0) {
       console.log("white lose");
       message = "Player 2 Won!";
       winner = true;
+      return;
     }
   }
-  // plyaer runs out of moves
+
+  if (whiteMoves === 0 && turn === 1) {
+    console.log("white lose");
+    message = "Player 2 Won!";
+    winner = true;
+    return;
+  } else {
+    if (redMoves === 0 && turn === 2) {
+      console.log("red lose");
+      message = "Player 1 Won!";
+      winner = true;
+      return;
+    }
+  }
 }
 
 // remove a piece
