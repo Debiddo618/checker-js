@@ -150,6 +150,12 @@ function handleClick(event) {
       movePiece(selectedPiece, selectedLocation);
     }
   }
+  if (selectedPiece !== null && selectedLocation !== null) {
+    selectedPiece = null;
+    selectedLocation = null;
+    switchPlayer();
+  }
+  updateMessage();
 }
 
 // remove a piece
@@ -172,7 +178,8 @@ function selectPieceAndLocation(event) {
     col: Number(event.dataset.col),
   };
   if (selectedPiece === null) {
-    if (event.dataset.player === "1" || event.dataset.player === "2") {
+    console.log(typeof turn);
+    if (Number(event.dataset.player) === turn) {
       // console.log("setting piece");
       selectedPiece = event;
       // console.log(selectedPiece);
