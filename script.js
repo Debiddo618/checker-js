@@ -7,8 +7,9 @@ let turn;
 let message;
 let selectedPiece = null;
 let selectedLocation = null;
-let moves = [];
+let moves;
 let checkerBoard;
+let attack;
 
 // initialize the board
 init();
@@ -23,16 +24,16 @@ function init() {
     [0, 1, 0, 1, 0, 1, 0, 1],
     [1, 0, 1, 0, 1, 0, 1, 0],
   ];
-  // checkerBoard = [
-  //   [0, 2, 0, 2, 0, 2, 0, 2],
-  //   [2, 0, 2, 0, 2, 0, 2, 0],
-  //   [0, 2, 0, 2, 0, 2, 0, 2],
-  //   [1, 0, 1, 0, 1, 0, 0, 1],
-  //   [0, 0, 0, 0, 0, 0, 0, 0],
-  //   [0, 0, 0, 0, 0, 0, 0, 0],
-  //   [0, 0, 0, 0, 0, 0, 0, 0],
-  //   [0, 0, 0, 0, 0, 0, 0, 0],
-  // ];
+  checkerBoard = [
+    [0, 2, 0, 2, 0, 2, 0, 2],
+    [2, 0, 2, 0, 2, 0, 2, 0],
+    [0, 2, 0, 2, 0, 2, 0, 2],
+    [1, 0, 1, 0, 1, 0, 0, 1],
+    [0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0],
+  ];
   // checkerBoard = [
   //   [0, 0, 0, 0, 0, 0, 0, 0],
   //   [0, 0, 0, 0, 0, 0, 0, 0],
@@ -86,10 +87,8 @@ function updateBoard() {
       checkerPiece.classList.add("checker-piece");
 
       if ((i + j) % 2 === 0) {
-        //even => black space
         checkerCell.classList.add("white");
       } else {
-        //odd => white space
         checkerCell.classList.add("black");
       }
 
@@ -125,12 +124,65 @@ function updateBoard() {
 
 // handle click
 function handleClick(event) {
+  selectPieceAndLocation(event.target);
+  if (selectedPiece !== null) {
+    moves = findFreeSpaces(selectedPiece);
+  }
+  console.error(selectedLocation);
+  if (selectedLocation !== null && isInArray(moves.attack, selectedLocation)) {
+    attack = true;
+  } else {
+    attack = false;
+  }
+  console.log(attack);
   // console.warn(event.target);
-  movePiece(event.target, { row: 4, col: 4 });
-  updateBoard();
+  // movePiece(event.target, { row: 4, col: 4 });
+  // updateBoard();
   // console.log("/////////////");
   // console.log(findFreeSpaces(event.target));
   // console.log("/////////////");
+}
+
+// select the piece and location
+function selectPieceAndLocation(event) {
+  let locationObj = {
+    row: Number(event.dataset.row),
+    col: Number(event.dataset.col),
+  };
+  if (selectedPiece === null) {
+    if (event.dataset.player === "1" || event.dataset.player === "2") {
+      console.log("setting piece");
+      selectedPiece = event;
+      console.log(selectedPiece);
+    }
+  } else {
+    if (selectedLocation === null) {
+      if (event.dataset.player === "0") {
+        if (
+          isInArray(moves.move, locationObj) ||
+          isInArray(moves.attack, locationObj)
+        ) {
+          selectedLocation = locationObj;
+          // messageEl.innerText="valid";
+        } else {
+          selectedPiece = null;
+          messageEl.innerText = "Invalid Move!";
+        }
+      }
+    }
+  }
+}
+
+// check if an object is contained in an Array
+function isInArray(arr, obj) {
+  console.log("inside isInArray");
+  const foundObject = arr.find(
+    (item) => item.row === obj.row && item.col === obj.col
+  );
+  if (foundObject) {
+    return true;
+  }
+  return false;
 }
 
 // move a piece to location
