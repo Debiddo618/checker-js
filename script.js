@@ -5,18 +5,29 @@ const checkerCellEl = [];
 
 let turn;
 let message;
-let selectedPiece;
+let selectedPiece = null;
+let selectedLocation = null;
 let moves = [];
 let checkerBoard;
 
 // initialize the board
 function init() {
   checkerBoard = [
-    [0, -1, 0, -1, 0, -1, 0, -1],
-    [-1, 0, -1, 0, -1, 0, -1, 0],
-    [0, -1, 0, -1, 0, -1, 0, -1],
+    [0, 2, 0, 2, 0, 2, 0, 2],
+    [2, 0, 2, 0, 2, 0, 2, 0],
+    [0, 2, 0, 2, 0, 2, 0, 2],
     [0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0],
+    [1, 0, 1, 0, 1, 0, 1, 0],
+    [0, 1, 0, 1, 0, 1, 0, 1],
+    [1, 0, 1, 0, 1, 0, 1, 0],
+  ];
+  checkerBoard = [
+    [0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 2, 0, 2, 0, 2, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 2, 0, 2, 0, 0, 0, 2],
     [1, 0, 1, 0, 1, 0, 1, 0],
     [0, 1, 0, 1, 0, 1, 0, 1],
     [1, 0, 1, 0, 1, 0, 1, 0],
@@ -24,6 +35,8 @@ function init() {
   turn = 1;
   render();
 }
+
+init();
 
 // render the initial board
 function render() {
@@ -49,10 +62,10 @@ function updateBoard() {
         checkerCell.classList.add("black");
       }
 
-      if (checkerBoard[i][j] === -1) {
+      if (checkerBoard[i][j] === 2) {
         checkerCell.classList.add("occupied");
         checkerPiece.classList.add("red");
-        checkerCell.dataset.player = -1;
+        checkerCell.dataset.player = 2;
         checkerCell.append(checkerPiece);
       } else if (checkerBoard[i][j] === 0) {
         checkerCell.classList.add("unoccupied");
@@ -79,25 +92,28 @@ function updateBoard() {
   }
 }
 
+// handle click
 function handleClick(event) {
-  // console.log(event.target.dataset.row);
-  // console.log(event.target.dataset.col);
-  // console.log(event.target.dataset);
-  console.warn(event.target);
-  findAvailiableMoves(event.target);
+  // console.warn(event.target);
+  console.log("/////////////");
+  console.log(findFreeSpaces(event.target));
+  console.log("/////////////");
+}
+
+// move a piece
+function movePiece(piece, location) {
+  return;
 }
 
 // takes in a piece and return availiable moves
-function findAvailiableMoves(piece) {
-  let moves = [];
-  // console.log(piece);
-  if (piece.dataset.player === "0") {
-    // console.log("It is a blank space");
-    // console.log(`The row: ${piece.dataset.row} col:${piece.dataset.col}`);
-    // let coordinates = { row: piece.dataset.row, col: piece.dataset.col };
-    // console.log(checkInBound(coordinates));
-  } else if (piece.dataset.player === "1") {
-    console.log("white piece");
+function findFreeSpaces(piece) {
+  let moves = {
+    move: [],
+    attack: [],
+  };
+
+  if (piece.dataset.player === "1") {
+    // this is a white piece
     let leftMove = {
       row: Number(piece.dataset.row) - 1,
       col: Number(piece.dataset.col) - 1,
@@ -106,37 +122,53 @@ function findAvailiableMoves(piece) {
       row: Number(piece.dataset.row) - 1,
       col: Number(piece.dataset.col) + 1,
     };
-    // console.warn(leftMove);
-    // console.error(rightMove);
-    if (checkInBound(leftMove)) {
-      moves.push(leftMove);
+    let rightMoveDouble = {
+      row: Number(piece.dataset.row) - 2,
+      col: Number(piece.dataset.col) + 2,
+    };
+    let leftMoveDouble = {
+      row: Number(piece.dataset.row) - 2,
+      col: Number(piece.dataset.col) - 2,
+    };
+
+    // adding free spaces into availiable moves
+    if (checkInBound(leftMove) && !checkOccupied(leftMove)) {
+      moves.move.push(leftMove);
     }
-    if (checkInBound(rightMove)) {
-      moves.push(rightMove);
+    if (checkInBound(rightMove) && !checkOccupied(rightMove)) {
+      moves.move.push(rightMove);
     }
-    console.log(checkInBound(rightMove));
+
+    if(checkInBound(leftMoveDouble) && checkOccupied(leftMove) && findPlayer(leftMove)==="2" &&  !checkOccupied(leftMoveDouble)){
+      moves.attack.push(leftMoveDouble);
+    }
+    if(checkInBound(rightMoveDouble) && checkOccupied(rightMove) && findPlayer(rightMove)==="2" &&  !checkOccupied(rightMoveDouble)){
+      moves.attack.push(rightMoveDouble);
+    }
+
+    // adding attacks into availiable moves
+  } else if (piece.dataset.player === "2") {
+    // this is a red piece
+    let leftMove = {
+      row: Number(piece.dataset.row) + 1,
+      col: Number(piece.dataset.col) - 1,
+    };
+    let rightMove = {
+      row: Number(piece.dataset.row) + 1,
+      col: Number(piece.dataset.col) + 1,
+    };
+    if (checkInBound(leftMove) && !checkOccupied(leftMove)) {
+      // console.log("checking left move");
+      moves.left = leftMove;
+    }
+    if (checkInBound(rightMove) && !checkOccupied(rightMove)) {
+      // console.log("Checking right move")
+      moves.right = rightMove;
+    }
   } else {
-    if (piece.dataset.player === "-1") {
-      // console.log("red piece");
-      let leftMove = {
-        row: Number(piece.dataset.row) + 1,
-        col: Number(piece.dataset.col) - 1,
-      };
-      let rightMove = {
-        row: Number(piece.dataset.row) + 1,
-        col: Number(piece.dataset.col) + 1,
-      };
-      // console.warn(leftMove);
-      // console.error(rightMove);
-      if (checkInBound(leftMove)) {
-        moves.push(leftMove);
-      }
-      if (checkInBound(rightMove)) {
-        moves.push(rightMove);
-      }
-      console.log(checkInBound(rightMove));
-    }
+    // this is a empty space
   }
+  return moves;
 }
 
 // check if coordinate object is inbound. True if inside the board
@@ -155,20 +187,20 @@ function checkInBound(coordinate) {
 
 //check if coordinate object is occupied. True if occupied
 function checkOccupied(coordinate) {
-  // {row:1,col:2} => 12
   let coordinateId = `${coordinate.row}` + `${coordinate.col}`;
   let checkerCell = document.getElementById(coordinateId);
-  // console.log(checkerCell);
   if (checkerCell.classList.contains("occupied")) {
-    // console.log("occupied");
     return true;
   } else {
     if (checkerCell.classList.contains("unoccupied")) {
-      // console.log("unoccupied");
       return false;
     }
   }
 }
-// let testCoordinate = { row: 1, col: 2 };
-// console.log(checkOccupied(testCoordinate));
-init();
+
+// find which player a piece belongs to (string)
+function findPlayer(coordinate) {
+  let coordinateId = `${coordinate.row}` + `${coordinate.col}`;
+  let checkerCell = document.getElementById(coordinateId);
+  return checkerCell.dataset.player;
+}
