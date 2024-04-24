@@ -67,13 +67,16 @@ function updateMessage() {
 
 // switch player
 function switchPlayer() {
-  if (turn === 1) {
-    turn = 2;
-  } else {
-    if (turn === 2) {
-      turn = 1;
+  if (attack !== true) {
+    if (turn === 1) {
+      turn = 2;
+    } else {
+      if (turn === 2) {
+        turn = 1;
+      }
     }
   }
+  updateMessage();
 }
 
 // update the board
