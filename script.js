@@ -34,16 +34,16 @@ function init() {
     [0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0],
   ];
-  // checkerBoard = [
-  //   [0, 0, 0, 0, 0, 0, 0, 0],
-  //   [0, 0, 0, 0, 0, 0, 0, 0],
-  //   [0, 2, 0, 2, 0, 2, 0, 0],
-  //   [0, 0, 0, 0, 0, 0, 0, 0],
-  //   [0, 2, 0, 2, 0, 0, 0, 2],
-  //   [1, 0, 1, 0, 1, 0, 1, 0],
-  //   [0, 1, 0, 1, 0, 1, 0, 1],
-  //   [1, 0, 1, 0, 1, 0, 1, 0],
-  // ];
+  checkerBoard = [
+    [0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 2, 0, 2, 0, 2, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 2, 0, 2, 0, 0, 0, 2],
+    [1, 0, 1, 0, 1, 0, 1, 0],
+    [0, 1, 0, 1, 0, 1, 0, 1],
+    [1, 0, 1, 0, 1, 0, 1, 0],
+  ];
   turn = 1;
   render();
 }
@@ -128,22 +128,41 @@ function handleClick(event) {
   if (selectedPiece !== null) {
     moves = findFreeSpaces(selectedPiece);
   }
-  console.error(selectedLocation);
+  // console.error(selectedLocation);
   if (selectedLocation !== null && isInArray(moves.attack, selectedLocation)) {
     attack = true;
   } else {
     attack = false;
   }
   ////////////////////////////////////////////////////////// selected location is validated up to this point inside selectPiece
-  if (selectedLocation !== null) {
+  if (selectedLocation !== null && attack) {
     movePiece(selectedPiece, selectedLocation);
+    // console.log(moves, selectedLocation);
+    removePiece(
+      {
+        row: Number(selectedPiece.dataset.row),
+        col: Number(selectedPiece.dataset.col),
+      },
+      selectedLocation
+    );
+  } else {
+    if (selectedLocation !== null) {
+      movePiece(selectedPiece, selectedLocation);
+    }
   }
-  // console.warn(event.target);
-  // movePiece(event.target, { row: 4, col: 4 });
-  // updateBoard();
-  // console.log("/////////////");
-  // console.log(findFreeSpaces(event.target));
-  // console.log("/////////////");
+}
+
+// remove a piece
+function removePiece(before, after) {
+  console.log(before);
+  console.log(after);
+  let midPoint = {
+    row: (before.row + after.row) / 2,
+    col: (before.col + after.col) / 2,
+  };
+  console.log(midPoint);
+  checkerBoard[midPoint.row][midPoint.col] = 0;
+  updateBoard();
 }
 
 // select the piece and location, also check if location is valid
@@ -154,9 +173,9 @@ function selectPieceAndLocation(event) {
   };
   if (selectedPiece === null) {
     if (event.dataset.player === "1" || event.dataset.player === "2") {
-      console.log("setting piece");
+      // console.log("setting piece");
       selectedPiece = event;
-      console.log(selectedPiece);
+      // console.log(selectedPiece);
     }
   } else {
     if (selectedLocation === null) {
@@ -176,22 +195,19 @@ function selectPieceAndLocation(event) {
   }
 }
 
-// remove a piece
-function removePiece(location) {
-  checkerBoard[location.row][location.col] = 0;
-  updateBoard();
-}
-
 // check if an object is contained in an Array
 function isInArray(arr, obj) {
-  console.log("inside isInArray");
+  // console.log("Inside isInarray ");
+  // console.log("arr", arr);
+  // console.log("obj", obj);
   const foundObject = arr.find(
     (item) => item.row === obj.row && item.col === obj.col
   );
   if (foundObject) {
     return true;
+  } else {
+    return false;
   }
-  return false;
 }
 
 // move a piece to location
@@ -213,6 +229,8 @@ function findFreeSpaces(piece) {
   let moves = {
     move: [],
     attack: [],
+    attackLeft: [],
+    attackRight: [],
   };
 
   if (piece.dataset.player === "1") {
@@ -249,6 +267,7 @@ function findFreeSpaces(piece) {
       !checkOccupied(leftMoveDouble)
     ) {
       moves.attack.push(leftMoveDouble);
+      moves.attackLeft.push([leftMove, leftMoveDouble]);
     }
     if (
       checkInBound(rightMoveDouble) &&
@@ -257,6 +276,7 @@ function findFreeSpaces(piece) {
       !checkOccupied(rightMoveDouble)
     ) {
       moves.attack.push(rightMoveDouble);
+      moves.attackRight.push([rightMove, rightMoveDouble]);
     }
 
     // adding attacks into availiable moves
@@ -294,6 +314,7 @@ function findFreeSpaces(piece) {
       !checkOccupied(leftMoveDouble)
     ) {
       moves.attack.push(leftMoveDouble);
+      moves.attackLeft.push([leftMove, leftMoveDouble]);
     }
     if (
       checkInBound(rightMoveDouble) &&
@@ -302,6 +323,7 @@ function findFreeSpaces(piece) {
       !checkOccupied(rightMoveDouble)
     ) {
       moves.attack.push(rightMoveDouble);
+      moves.attackRight.push([rightMove, rightMoveDouble]);
     }
   } else {
     // this is a empty space
