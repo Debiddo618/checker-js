@@ -11,6 +11,7 @@ let moves = [];
 let checkerBoard;
 
 // initialize the board
+init();
 function init() {
   checkerBoard = [
     [0, 2, 0, 2, 0, 2, 0, 2],
@@ -22,16 +23,16 @@ function init() {
     [0, 1, 0, 1, 0, 1, 0, 1],
     [1, 0, 1, 0, 1, 0, 1, 0],
   ];
-  checkerBoard = [
-    [0, 2, 0, 2, 0, 2, 0, 2],
-    [2, 0, 2, 0, 2, 0, 2, 0],
-    [0, 2, 0, 2, 0, 2, 0, 2],
-    [1, 0, 1, 0, 1, 0, 0, 1],
-    [0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0],
-  ];
+  // checkerBoard = [
+  //   [0, 2, 0, 2, 0, 2, 0, 2],
+  //   [2, 0, 2, 0, 2, 0, 2, 0],
+  //   [0, 2, 0, 2, 0, 2, 0, 2],
+  //   [1, 0, 1, 0, 1, 0, 0, 1],
+  //   [0, 0, 0, 0, 0, 0, 0, 0],
+  //   [0, 0, 0, 0, 0, 0, 0, 0],
+  //   [0, 0, 0, 0, 0, 0, 0, 0],
+  //   [0, 0, 0, 0, 0, 0, 0, 0],
+  // ];
   // checkerBoard = [
   //   [0, 0, 0, 0, 0, 0, 0, 0],
   //   [0, 0, 0, 0, 0, 0, 0, 0],
@@ -46,12 +47,21 @@ function init() {
   render();
 }
 
-init();
-
 // render the initial board
 function render() {
   updateBoard();
-  // updateMessage();
+  updateMessage();
+}
+
+// update message
+function updateMessage(){
+  if(turn===1){
+    messageEl.innerText = "Turn of Player 1";
+  }else{
+    if(turn===2){
+      messageEl.innerText = "Turn of Player 2";
+    }
+  }
 }
 
 // update the board
@@ -115,7 +125,7 @@ function movePiece(piece, location) {
   return;
 }
 
-// takes in a piece and return availiable moves
+// takes in a piece(checker-cell) and return availiable moves
 function findFreeSpaces(piece) {
   let moves = {
     move: [],
@@ -149,10 +159,20 @@ function findFreeSpaces(piece) {
       moves.move.push(rightMove);
     }
 
-    if(checkInBound(leftMoveDouble) && checkOccupied(leftMove) && findPlayer(leftMove)==="2" &&  !checkOccupied(leftMoveDouble)){
+    if (
+      checkInBound(leftMoveDouble) &&
+      checkOccupied(leftMove) &&
+      findPlayer(leftMove) === "2" &&
+      !checkOccupied(leftMoveDouble)
+    ) {
       moves.attack.push(leftMoveDouble);
     }
-    if(checkInBound(rightMoveDouble) && checkOccupied(rightMove) && findPlayer(rightMove)==="2" &&  !checkOccupied(rightMoveDouble)){
+    if (
+      checkInBound(rightMoveDouble) &&
+      checkOccupied(rightMove) &&
+      findPlayer(rightMove) === "2" &&
+      !checkOccupied(rightMoveDouble)
+    ) {
       moves.attack.push(rightMoveDouble);
     }
 
@@ -184,13 +204,22 @@ function findFreeSpaces(piece) {
       moves.move.push(rightMove);
     }
 
-    if(checkInBound(leftMoveDouble) && checkOccupied(leftMove) && findPlayer(leftMove)==="1" &&  !checkOccupied(leftMoveDouble)){
+    if (
+      checkInBound(leftMoveDouble) &&
+      checkOccupied(leftMove) &&
+      findPlayer(leftMove) === "1" &&
+      !checkOccupied(leftMoveDouble)
+    ) {
       moves.attack.push(leftMoveDouble);
     }
-    if(checkInBound(rightMoveDouble) && checkOccupied(rightMove) && findPlayer(rightMove)==="1" &&  !checkOccupied(rightMoveDouble)){
+    if (
+      checkInBound(rightMoveDouble) &&
+      checkOccupied(rightMove) &&
+      findPlayer(rightMove) === "1" &&
+      !checkOccupied(rightMoveDouble)
+    ) {
       moves.attack.push(rightMoveDouble);
     }
-
   } else {
     // this is a empty space
   }
