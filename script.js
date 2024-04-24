@@ -44,16 +44,16 @@ function init() {
   //   [0, 1, 0, 1, 0, 1, 0, 1],
   //   [1, 0, 1, 0, 1, 0, 1, 0],
   // ];
-  // checkerBoard = [
-  //   [0, 0, 0, 0, 0, 0, 0, 0],
-  //   [0, 0, 0, 0, 0, 0, 0, 0],
-  //   [0, 0, 0, 1, 0, 0, 0, 0],
-  //   [0, 0, 0, 0, 0, 0, 0, 0],
-  //   [0, 0, 0, 2, 0, 0, 0, 0],
-  //   [0, 0, 0, 0, 0, 0, 0, 0],
-  //   [0, 0, 0, 0, 0, 2, 0, 0],
-  //   [0, 0, 0, 0, 0, 0, 0, 0],
-  // ];
+  checkerBoard = [
+    [0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 1, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 1, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 2, 0, 0, 0],
+    [0, 0, 0, 0, 0, 2, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0],
+  ];
   message = "Turn of Player 1";
   winner = false;
   turn = 1;
@@ -110,6 +110,10 @@ function updateBoard() {
       } else if (checkerBoard[i][j] === 0) {
         checkerCell.classList.add("unoccupied");
         checkerCell.dataset.player = 0;
+      }else if(checkerBoard[i][j]==="WK"){
+        console.log("White King");
+      }else if(checkerBoard[i][j]==="RK"){
+        console.log("Red King");
       } else {
         if (checkerBoard[i][j] === 1) {
           checkerCell.classList.add("occupied");
@@ -274,7 +278,19 @@ function movePiece(piece, location) {
   if (piece.dataset.player === "1" || piece.dataset.player === "2") {
     checkerBoard[piece.dataset.row][piece.dataset.col] = 0;
     checkerBoard[location.row][location.col] = Number(piece.dataset.player);
+    piecePromotion(piece, location);
     updateBoard();
+  }
+}
+
+// promote a piece
+function piecePromotion(piece, location) {
+  console.log(piece.children[0]);
+  if (piece.dataset.player === "1" && location.row === 0) {
+    checkerBoard[location.row][location.col] = "WK";
+  }
+  if (piece.dataset.player === "2" && location.row === 7) {
+    checkerBoard[location.row][location.col] = "RK";
   }
 }
 
