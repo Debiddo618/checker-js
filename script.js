@@ -138,7 +138,6 @@ function handleClick(event) {
   if (selectedLocation !== null) {
     movePiece(selectedPiece, selectedLocation);
   }
-  updateBoard();
   // console.warn(event.target);
   // movePiece(event.target, { row: 4, col: 4 });
   // updateBoard();
@@ -177,6 +176,12 @@ function selectPieceAndLocation(event) {
   }
 }
 
+// remove a piece
+function removePiece(location) {
+  checkerBoard[location.row][location.col] = 0;
+  updateBoard();
+}
+
 // check if an object is contained in an Array
 function isInArray(arr, obj) {
   console.log("inside isInArray");
@@ -193,16 +198,15 @@ function isInArray(arr, obj) {
 function movePiece(piece, location) {
   // console.log(piece);
   // console.log(location);
-  console.log("inside movepiece");
+  // console.log("inside movepiece");
   if (piece.dataset.player === "1" || piece.dataset.player === "2") {
-    console.log(checkerBoard);
+    // console.log(checkerBoard);
     checkerBoard[piece.dataset.row][piece.dataset.col] = 0;
     checkerBoard[location.row][location.col] = Number(piece.dataset.player);
-    console.error(checkerBoard);
+    // console.error(checkerBoard);
+    updateBoard();
   }
 }
-
-
 
 // takes in a piece(checker-cell) and return availiable moves
 function findFreeSpaces(piece) {
