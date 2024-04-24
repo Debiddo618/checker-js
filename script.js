@@ -134,7 +134,11 @@ function handleClick(event) {
   } else {
     attack = false;
   }
-  console.log(attack);
+  ////////////////////////////////////////////////////////// selected location is validated up to this point inside selectPiece
+  if (selectedLocation !== null) {
+    movePiece(selectedPiece, selectedLocation);
+  }
+  updateBoard();
   // console.warn(event.target);
   // movePiece(event.target, { row: 4, col: 4 });
   // updateBoard();
@@ -143,7 +147,7 @@ function handleClick(event) {
   // console.log("/////////////");
 }
 
-// select the piece and location
+// select the piece and location, also check if location is valid
 function selectPieceAndLocation(event) {
   let locationObj = {
     row: Number(event.dataset.row),
@@ -189,6 +193,7 @@ function isInArray(arr, obj) {
 function movePiece(piece, location) {
   // console.log(piece);
   // console.log(location);
+  console.log("inside movepiece");
   if (piece.dataset.player === "1" || piece.dataset.player === "2") {
     console.log(checkerBoard);
     checkerBoard[piece.dataset.row][piece.dataset.col] = 0;
@@ -196,6 +201,8 @@ function movePiece(piece, location) {
     console.error(checkerBoard);
   }
 }
+
+
 
 // takes in a piece(checker-cell) and return availiable moves
 function findFreeSpaces(piece) {
