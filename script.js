@@ -23,15 +23,25 @@ function init() {
     [1, 0, 1, 0, 1, 0, 1, 0],
   ];
   checkerBoard = [
+    [0, 2, 0, 2, 0, 2, 0, 2],
+    [2, 0, 2, 0, 2, 0, 2, 0],
+    [0, 2, 0, 2, 0, 2, 0, 2],
+    [1, 0, 1, 0, 1, 0, 0, 1],
     [0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 2, 0, 2, 0, 2, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 2, 0, 2, 0, 0, 0, 2],
-    [1, 0, 1, 0, 1, 0, 1, 0],
-    [0, 1, 0, 1, 0, 1, 0, 1],
-    [1, 0, 1, 0, 1, 0, 1, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0],
   ];
+  // checkerBoard = [
+  //   [0, 0, 0, 0, 0, 0, 0, 0],
+  //   [0, 0, 0, 0, 0, 0, 0, 0],
+  //   [0, 2, 0, 2, 0, 2, 0, 0],
+  //   [0, 0, 0, 0, 0, 0, 0, 0],
+  //   [0, 2, 0, 2, 0, 0, 0, 2],
+  //   [1, 0, 1, 0, 1, 0, 1, 0],
+  //   [0, 1, 0, 1, 0, 1, 0, 1],
+  //   [1, 0, 1, 0, 1, 0, 1, 0],
+  // ];
   turn = 1;
   render();
 }
@@ -157,14 +167,30 @@ function findFreeSpaces(piece) {
       row: Number(piece.dataset.row) + 1,
       col: Number(piece.dataset.col) + 1,
     };
+    let leftMoveDouble = {
+      row: Number(piece.dataset.row) + 2,
+      col: Number(piece.dataset.col) - 2,
+    };
+    let rightMoveDouble = {
+      row: Number(piece.dataset.row) + 2,
+      col: Number(piece.dataset.col) + 2,
+    };
     if (checkInBound(leftMove) && !checkOccupied(leftMove)) {
       // console.log("checking left move");
-      moves.left = leftMove;
+      moves.move.push(leftMove);
     }
     if (checkInBound(rightMove) && !checkOccupied(rightMove)) {
       // console.log("Checking right move")
-      moves.right = rightMove;
+      moves.move.push(rightMove);
     }
+
+    if(checkInBound(leftMoveDouble) && checkOccupied(leftMove) && findPlayer(leftMove)==="1" &&  !checkOccupied(leftMoveDouble)){
+      moves.attack.push(leftMoveDouble);
+    }
+    if(checkInBound(rightMoveDouble) && checkOccupied(rightMove) && findPlayer(rightMove)==="1" &&  !checkOccupied(rightMoveDouble)){
+      moves.attack.push(rightMoveDouble);
+    }
+
   } else {
     // this is a empty space
   }
