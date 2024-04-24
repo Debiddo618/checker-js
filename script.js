@@ -1,6 +1,5 @@
 const checkerBoardEl = document.querySelector(".checker-board");
 const messageEl = document.querySelector("#message");
-
 const checkerCellEl = [];
 
 let turn;
@@ -10,6 +9,7 @@ let selectedLocation = null;
 let moves;
 let checkerBoard;
 let attack;
+let winner;
 
 // initialize the board
 init();
@@ -28,22 +28,34 @@ function init() {
     [0, 2, 0, 2, 0, 2, 0, 2],
     [2, 0, 2, 0, 2, 0, 2, 0],
     [0, 2, 0, 2, 0, 2, 0, 2],
-    [1, 0, 1, 0, 1, 0, 0, 1],
     [0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 1, 0, 1, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0],
   ];
-  checkerBoard = [
-    [0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 2, 0, 2, 0, 2, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 2, 0, 2, 0, 0, 0, 2],
-    [1, 0, 1, 0, 1, 0, 1, 0],
-    [0, 1, 0, 1, 0, 1, 0, 1],
-    [1, 0, 1, 0, 1, 0, 1, 0],
-  ];
+  // checkerBoard = [
+  //   [0, 0, 0, 0, 0, 0, 0, 0],
+  //   [0, 0, 0, 0, 0, 0, 0, 0],
+  //   [0, 2, 0, 2, 0, 2, 0, 0],
+  //   [0, 0, 0, 0, 0, 0, 0, 0],
+  //   [0, 2, 0, 2, 0, 0, 0, 2],
+  //   [1, 0, 1, 0, 1, 0, 1, 0],
+  //   [0, 1, 0, 1, 0, 1, 0, 1],
+  //   [1, 0, 1, 0, 1, 0, 1, 0],
+  // ];
+  // checkerBoard = [
+  //   [0, 0, 0, 0, 0, 0, 0, 0],
+  //   [0, 0, 0, 0, 0, 0, 0, 0],
+  //   [0, 0, 0, 0, 0, 0, 0, 0],
+  //   [0, 0, 0, 0, 0, 0, 0, 0],
+  //   [0, 0, 0, 2, 0, 0, 0, 0],
+  //   [1, 0, 1, 0, 1, 0, 1, 0],
+  //   [0, 1, 0, 1, 0, 1, 0, 1],
+  //   [1, 0, 1, 0, 1, 0, 1, 0],
+  // ];
+  message = "Turn of Player 1";
+  winner = false;
   turn = 1;
   render();
 }
@@ -56,13 +68,14 @@ function render() {
 
 // update message
 function updateMessage() {
-  if (turn === 1) {
-    messageEl.innerText = "Turn of Player 1";
-  } else {
-    if (turn === 2) {
-      messageEl.innerText = "Turn of Player 2";
-    }
-  }
+  // if (turn === 1) {
+  //   messageEl.innerText = "Turn of Player 1";
+  // } else {
+  //   if (turn === 2) {
+  //     messageEl.innerText = "Turn of Player 2";
+  //   }
+  // }
+  messageEl.innerText = message;
 }
 
 // switch player
@@ -70,13 +83,14 @@ function switchPlayer() {
   if (attack !== true) {
     if (turn === 1) {
       turn = 2;
+      message = "Turn of Player 2";
     } else {
       if (turn === 2) {
         turn = 1;
+        message = "Turn of Player 1";
       }
     }
   }
-  updateMessage();
 }
 
 // update the board
@@ -131,16 +145,14 @@ function handleClick(event) {
   if (selectedPiece !== null) {
     moves = findFreeSpaces(selectedPiece);
   }
-  // console.error(selectedLocation);
   if (selectedLocation !== null && isInArray(moves.attack, selectedLocation)) {
     attack = true;
   } else {
     attack = false;
   }
-  ////////////////////////////////////////////////////////// selected location is validated up to this point inside selectPiece
+  // selected location is validated up to this point inside selectPiece
   if (selectedLocation !== null && attack) {
     movePiece(selectedPiece, selectedLocation);
-    // console.log(moves, selectedLocation);
     removePiece(
       {
         row: Number(selectedPiece.dataset.row),
@@ -158,47 +170,71 @@ function handleClick(event) {
     selectedLocation = null;
     switchPlayer();
   }
+  checkWin();
   updateMessage();
+}
+
+// check win
+function checkWin() {
+  // player have no more pieces
+  let whitePieces = 0;
+  let redPieces = 0;
+  checkerBoard.forEach((row) => {
+    if (row.some((item) => item === 1)) {
+      whitePieces++;
+    }
+    if (row.some((item) => item === 2)) {
+      redPieces++;
+    }
+  });
+
+  if (redPieces === 0) {
+    console.log("red lose");
+    message = "Player 1 Won!";
+    winner = true;
+  } else {
+    if (whitePieces === 0) {
+      console.log("white lose");
+      message = "Player 2 Won!";
+      winner = true;
+    }
+  }
+  // plyaer runs out of moves
 }
 
 // remove a piece
 function removePiece(before, after) {
-  console.log(before);
-  console.log(after);
   let midPoint = {
     row: (before.row + after.row) / 2,
     col: (before.col + after.col) / 2,
   };
-  console.log(midPoint);
   checkerBoard[midPoint.row][midPoint.col] = 0;
   updateBoard();
 }
 
 // select the piece and location, also check if location is valid
 function selectPieceAndLocation(event) {
-  let locationObj = {
-    row: Number(event.dataset.row),
-    col: Number(event.dataset.col),
-  };
-  if (selectedPiece === null) {
-    console.log(typeof turn);
-    if (Number(event.dataset.player) === turn) {
-      // console.log("setting piece");
-      selectedPiece = event;
-      // console.log(selectedPiece);
-    }
-  } else {
-    if (selectedLocation === null) {
-      if (event.dataset.player === "0") {
-        if (
-          isInArray(moves.move, locationObj) ||
-          isInArray(moves.attack, locationObj)
-        ) {
-          selectedLocation = locationObj;
-          // messageEl.innerText="valid";
-        } else {
-          selectedPiece = null;
-          messageEl.innerText = "Invalid Move!";
+  if (!winner) {
+    let locationObj = {
+      row: Number(event.dataset.row),
+      col: Number(event.dataset.col),
+    };
+    if (selectedPiece === null) {
+      if (Number(event.dataset.player) === turn) {
+        selectedPiece = event;
+      }
+    } else {
+      if (selectedLocation === null) {
+        if (event.dataset.player === "0") {
+          if (
+            isInArray(moves.move, locationObj) ||
+            isInArray(moves.attack, locationObj)
+          ) {
+            selectedLocation = locationObj;
+          } else {
+            selectedPiece = null;
+            messageEl.innerText = "Invalid Move!";
+          }
         }
       }
     }
@@ -207,9 +243,6 @@ function selectPieceAndLocation(event) {
 
 // check if an object is contained in an Array
 function isInArray(arr, obj) {
-  // console.log("Inside isInarray ");
-  // console.log("arr", arr);
-  // console.log("obj", obj);
   const foundObject = arr.find(
     (item) => item.row === obj.row && item.col === obj.col
   );
@@ -222,14 +255,9 @@ function isInArray(arr, obj) {
 
 // move a piece to location
 function movePiece(piece, location) {
-  // console.log(piece);
-  // console.log(location);
-  // console.log("inside movepiece");
   if (piece.dataset.player === "1" || piece.dataset.player === "2") {
-    // console.log(checkerBoard);
     checkerBoard[piece.dataset.row][piece.dataset.col] = 0;
     checkerBoard[location.row][location.col] = Number(piece.dataset.player);
-    // console.error(checkerBoard);
     updateBoard();
   }
 }
@@ -244,7 +272,6 @@ function findFreeSpaces(piece) {
   };
 
   if (piece.dataset.player === "1") {
-    // this is a white piece
     let leftMove = {
       row: Number(piece.dataset.row) - 1,
       col: Number(piece.dataset.col) - 1,
@@ -262,7 +289,6 @@ function findFreeSpaces(piece) {
       col: Number(piece.dataset.col) - 2,
     };
 
-    // adding free spaces into availiable moves
     if (checkInBound(leftMove) && !checkOccupied(leftMove)) {
       moves.move.push(leftMove);
     }
@@ -290,60 +316,56 @@ function findFreeSpaces(piece) {
     }
 
     // adding attacks into availiable moves
-  } else if (piece.dataset.player === "2") {
-    // this is a red piece
-    let leftMove = {
-      row: Number(piece.dataset.row) + 1,
-      col: Number(piece.dataset.col) - 1,
-    };
-    let rightMove = {
-      row: Number(piece.dataset.row) + 1,
-      col: Number(piece.dataset.col) + 1,
-    };
-    let leftMoveDouble = {
-      row: Number(piece.dataset.row) + 2,
-      col: Number(piece.dataset.col) - 2,
-    };
-    let rightMoveDouble = {
-      row: Number(piece.dataset.row) + 2,
-      col: Number(piece.dataset.col) + 2,
-    };
-    if (checkInBound(leftMove) && !checkOccupied(leftMove)) {
-      // console.log("checking left move");
-      moves.move.push(leftMove);
-    }
-    if (checkInBound(rightMove) && !checkOccupied(rightMove)) {
-      // console.log("Checking right move")
-      moves.move.push(rightMove);
-    }
-
-    if (
-      checkInBound(leftMoveDouble) &&
-      checkOccupied(leftMove) &&
-      findPlayer(leftMove) === "1" &&
-      !checkOccupied(leftMoveDouble)
-    ) {
-      moves.attack.push(leftMoveDouble);
-      moves.attackLeft.push([leftMove, leftMoveDouble]);
-    }
-    if (
-      checkInBound(rightMoveDouble) &&
-      checkOccupied(rightMove) &&
-      findPlayer(rightMove) === "1" &&
-      !checkOccupied(rightMoveDouble)
-    ) {
-      moves.attack.push(rightMoveDouble);
-      moves.attackRight.push([rightMove, rightMoveDouble]);
-    }
   } else {
-    // this is a empty space
+    if (piece.dataset.player === "2") {
+      let leftMove = {
+        row: Number(piece.dataset.row) + 1,
+        col: Number(piece.dataset.col) - 1,
+      };
+      let rightMove = {
+        row: Number(piece.dataset.row) + 1,
+        col: Number(piece.dataset.col) + 1,
+      };
+      let leftMoveDouble = {
+        row: Number(piece.dataset.row) + 2,
+        col: Number(piece.dataset.col) - 2,
+      };
+      let rightMoveDouble = {
+        row: Number(piece.dataset.row) + 2,
+        col: Number(piece.dataset.col) + 2,
+      };
+      if (checkInBound(leftMove) && !checkOccupied(leftMove)) {
+        moves.move.push(leftMove);
+      }
+      if (checkInBound(rightMove) && !checkOccupied(rightMove)) {
+        moves.move.push(rightMove);
+      }
+
+      if (
+        checkInBound(leftMoveDouble) &&
+        checkOccupied(leftMove) &&
+        findPlayer(leftMove) === "1" &&
+        !checkOccupied(leftMoveDouble)
+      ) {
+        moves.attack.push(leftMoveDouble);
+        moves.attackLeft.push([leftMove, leftMoveDouble]);
+      }
+      if (
+        checkInBound(rightMoveDouble) &&
+        checkOccupied(rightMove) &&
+        findPlayer(rightMove) === "1" &&
+        !checkOccupied(rightMoveDouble)
+      ) {
+        moves.attack.push(rightMoveDouble);
+        moves.attackRight.push([rightMove, rightMoveDouble]);
+      }
+    }
   }
   return moves;
 }
 
 // check if coordinate object is inbound. True if inside the board
 function checkInBound(coordinate) {
-  // coordinate = {row,col}
   if (
     coordinate.row < 0 ||
     coordinate.row > 7 ||
