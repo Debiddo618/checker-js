@@ -6,7 +6,7 @@ This is a two-player checkers game created using vanilla JavaScript, HTML, and C
 
 ## Getting Started:
 
-You can access the game by clicking the link [here](https://debiddo618.github.io/pokemon-memory-game/).
+You can access the game by clicking the link [here](https://debiddo618.github.io/checker-js/).
 
 ## Game Images:
 
