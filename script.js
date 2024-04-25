@@ -24,36 +24,6 @@ function init() {
     [0, 1, 0, 1, 0, 1, 0, 1],
     [1, 0, 1, 0, 1, 0, 1, 0],
   ];
-  // checkerBoard = [
-  //   [0, 2, 0, 2, 0, 2, 0, 2],
-  //   [2, 0, 2, 0, 2, 0, 2, 0],
-  //   [0, 2, 0, 2, 0, 2, 0, 2],
-  //   [0, 0, 0, 0, 0, 0, 0, 0],
-  //   [0, 0, 0, 1, 0, 1, 0, 0],
-  //   [0, 0, 0, 0, 0, 0, 0, 0],
-  //   [0, 0, 0, 0, 0, 0, 0, 0],
-  //   [0, 0, 0, 0, 0, 0, 0, 0],
-  // ];
-  // checkerBoard = [
-  //   [0, 0, 0, 0, 0, 0, 0, 0],
-  //   [0, 0, 0, 0, 0, 0, 0, 0],
-  //   [0, 2, 0, 2, 0, 2, 0, 0],
-  //   [0, 0, 0, 0, 0, 0, 0, 0],
-  //   [0, 2, 0, 2, 0, 0, 0, 2],
-  //   [1, 0, 1, 0, 1, 0, 1, 0],
-  //   [0, 1, 0, 1, 0, 1, 0, 1],
-  //   [1, 0, 1, 0, 1, 0, 1, 0],
-  // ];
-  // checkerBoard = [
-  //   [0, 0, 0, 0, 0, 0, 0, 0],
-  //   [0, 0, 1, 0, 0, 0, 0, 0],
-  //   [0, 0, 0, 0, 0, 0, 0, 0],
-  //   [0, 0, 0, 0, 1, 0, 0, 0],
-  //   [0, 0, 0, 0, 0, 0, 0, 0],
-  //   [0, 0, 0, 0, 2, 0, 0, 0],
-  //   [0, 0, 0, 0, 0, 2, 0, 0],
-  //   [0, 0, 0, 0, 0, 0, 0, 0],
-  // ];
   message = "Turn of Player 1";
   winner = false;
   turn = 1;
@@ -279,7 +249,18 @@ function isInArray(arr, obj) {
 function movePiece(piece, location) {
   if (piece.dataset.player === "1" || piece.dataset.player === "2") {
     checkerBoard[piece.dataset.row][piece.dataset.col] = 0;
-    checkerBoard[location.row][location.col] = Number(piece.dataset.player);
+
+    if (piece.children[0].classList.contains("king")) {
+      if (piece.dataset.player === "1") {
+        checkerBoard[location.row][location.col] = "WK";
+      } else {
+        if (piece.dataset.player === "2") {
+          checkerBoard[location.row][location.col] = "RK";
+        }
+      }
+    } else {
+      checkerBoard[location.row][location.col] = Number(piece.dataset.player);
+    }
     piecePromotion(piece, location);
     updateBoard();
   }
@@ -287,12 +268,13 @@ function movePiece(piece, location) {
 
 // promote a piece
 function piecePromotion(piece, location) {
-  console.log(piece.children[0]);
   if (piece.dataset.player === "1" && location.row === 0) {
     checkerBoard[location.row][location.col] = "WK";
+    piece.children[0].classList.add("king");
   }
   if (piece.dataset.player === "2" && location.row === 7) {
     checkerBoard[location.row][location.col] = "RK";
+    piece.children[0].classList.add("king");
   }
 }
 
@@ -348,6 +330,49 @@ function findFreeSpaces(piece) {
       moves.attack.push(rightMoveDouble);
       moves.attackRight.push([rightMove, rightMoveDouble]);
     }
+    if (piece.children[0].classList.contains("king")) {
+      let leftMove = {
+        row: Number(piece.dataset.row) + 1,
+        col: Number(piece.dataset.col) - 1,
+      };
+      let rightMove = {
+        row: Number(piece.dataset.row) + 1,
+        col: Number(piece.dataset.col) + 1,
+      };
+      let leftMoveDouble = {
+        row: Number(piece.dataset.row) + 2,
+        col: Number(piece.dataset.col) - 2,
+      };
+      let rightMoveDouble = {
+        row: Number(piece.dataset.row) + 2,
+        col: Number(piece.dataset.col) + 2,
+      };
+      if (checkInBound(leftMove) && !checkOccupied(leftMove)) {
+        moves.move.push(leftMove);
+      }
+      if (checkInBound(rightMove) && !checkOccupied(rightMove)) {
+        moves.move.push(rightMove);
+      }
+
+      if (
+        checkInBound(leftMoveDouble) &&
+        checkOccupied(leftMove) &&
+        findPlayer(leftMove) === "2" &&
+        !checkOccupied(leftMoveDouble)
+      ) {
+        moves.attack.push(leftMoveDouble);
+        moves.attackLeft.push([leftMove, leftMoveDouble]);
+      }
+      if (
+        checkInBound(rightMoveDouble) &&
+        checkOccupied(rightMove) &&
+        findPlayer(rightMove) === "2" &&
+        !checkOccupied(rightMoveDouble)
+      ) {
+        moves.attack.push(rightMoveDouble);
+        moves.attackRight.push([rightMove, rightMoveDouble]);
+      }
+    }
 
     // adding attacks into availiable moves
   } else {
@@ -392,6 +417,50 @@ function findFreeSpaces(piece) {
       ) {
         moves.attack.push(rightMoveDouble);
         moves.attackRight.push([rightMove, rightMoveDouble]);
+      }
+      if (piece.children[0].classList.contains("king")) {
+        let leftMove = {
+          row: Number(piece.dataset.row) - 1,
+          col: Number(piece.dataset.col) - 1,
+        };
+        let rightMove = {
+          row: Number(piece.dataset.row) - 1,
+          col: Number(piece.dataset.col) + 1,
+        };
+        let rightMoveDouble = {
+          row: Number(piece.dataset.row) - 2,
+          col: Number(piece.dataset.col) + 2,
+        };
+        let leftMoveDouble = {
+          row: Number(piece.dataset.row) - 2,
+          col: Number(piece.dataset.col) - 2,
+        };
+
+        if (checkInBound(leftMove) && !checkOccupied(leftMove)) {
+          moves.move.push(leftMove);
+        }
+        if (checkInBound(rightMove) && !checkOccupied(rightMove)) {
+          moves.move.push(rightMove);
+        }
+
+        if (
+          checkInBound(leftMoveDouble) &&
+          checkOccupied(leftMove) &&
+          findPlayer(leftMove) === "1" &&
+          !checkOccupied(leftMoveDouble)
+        ) {
+          moves.attack.push(leftMoveDouble);
+          moves.attackLeft.push([leftMove, leftMoveDouble]);
+        }
+        if (
+          checkInBound(rightMoveDouble) &&
+          checkOccupied(rightMove) &&
+          findPlayer(rightMove) === "1" &&
+          !checkOccupied(rightMoveDouble)
+        ) {
+          moves.attack.push(rightMoveDouble);
+          moves.attackRight.push([rightMove, rightMoveDouble]);
+        }
       }
     }
   }
