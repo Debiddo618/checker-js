@@ -9,18 +9,24 @@ body{
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    gap: 20px;
+    width: 100%;
+    height: 100vh;
 }
+
 .checker-board {
     display: flex;
     flex-wrap: wrap;
     border: 2px solid black;
-    width: 30%;
+    width: 40%;
     aspect-ratio: 1/1;
     justify-content: center;
     align-content: center;
+    padding: 5px;
+    background-color: black;
 }
 .checker-cell {
-    border: 2px solid black;
+    border: 3px solid black;
     width: calc(100%/8);
     aspect-ratio: 1/1;
     color: white;
@@ -30,10 +36,10 @@ body{
 }
 
 .black{
-    background-color: black;
+    background-color: #503C3C;
 }
 .white{
-    background-color: grey;
+    background-color:#B99470;
 }
 
 .checker-piece.red{
@@ -42,26 +48,37 @@ body{
     background-color: red;
     border-radius: 50%;
     pointer-events: none;
+    background-image: url("images/regular.png");
+    background-repeat: no-repeat;
+    background-size:contain;
+    background-position: center center;
+    border: 5px solid black;
 }
 
 
 .checker-piece.white{
     width: 100%;
     height:100%;
-    background-color: white;
     border-radius: 50%;
     pointer-events: none;
+    background-image: url("images/regular.png");
+    background-color: white;
+    background-repeat: no-repeat;
+    background-size:contain;
+    background-position: center center;
+    border: 5px solid black;
 }
 
 .checker-piece.white.king{
     width: 100%;
     height: 100%;
-    background-color:white;
     border-radius: 50%;
     background-image: url("images/crown.svg");
+    background-color:white;
     background-repeat: no-repeat;
     background-size:contain;
     background-position: center center;
+    border: 5px solid black;
 }
 
 .checker-piece.red.king{
@@ -73,4 +90,5 @@ body{
     background-repeat: no-repeat;
     background-size:contain;
     background-position: center center;
+    border: 5px solid black;
 }
