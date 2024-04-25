@@ -44,16 +44,16 @@ function init() {
   //   [0, 1, 0, 1, 0, 1, 0, 1],
   //   [1, 0, 1, 0, 1, 0, 1, 0],
   // ];
-  checkerBoard = [
-    [0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 1, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 1, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 2, 0, 0, 0],
-    [0, 0, 0, 0, 0, 2, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0],
-  ];
+  // checkerBoard = [
+  //   [0, 0, 0, 0, 0, 0, 0, 0],
+  //   [0, 0, 1, 0, 0, 0, 0, 0],
+  //   [0, 0, 0, 0, 0, 0, 0, 0],
+  //   [0, 0, 0, 0, 1, 0, 0, 0],
+  //   [0, 0, 0, 0, 0, 0, 0, 0],
+  //   [0, 0, 0, 0, 2, 0, 0, 0],
+  //   [0, 0, 0, 0, 0, 2, 0, 0],
+  //   [0, 0, 0, 0, 0, 0, 0, 0],
+  // ];
   message = "Turn of Player 1";
   winner = false;
   turn = 1;
@@ -110,10 +110,18 @@ function updateBoard() {
       } else if (checkerBoard[i][j] === 0) {
         checkerCell.classList.add("unoccupied");
         checkerCell.dataset.player = 0;
-      }else if(checkerBoard[i][j]==="WK"){
-        console.log("White King");
-      }else if(checkerBoard[i][j]==="RK"){
-        console.log("Red King");
+      } else if (checkerBoard[i][j] === "WK") {
+        checkerCell.classList.add("occupied");
+        checkerPiece.classList.add("white");
+        checkerPiece.classList.add("king");
+        checkerCell.dataset.player = 1;
+        checkerCell.append(checkerPiece);
+      } else if (checkerBoard[i][j] === "RK") {
+        checkerCell.classList.add("occupied");
+        checkerPiece.classList.add("red");
+        checkerPiece.classList.add("king");
+        checkerCell.dataset.player = 2;
+        checkerCell.append(checkerPiece);
       } else {
         if (checkerBoard[i][j] === 1) {
           checkerCell.classList.add("occupied");
@@ -183,24 +191,20 @@ function checkWin() {
   whitePieceEl.forEach((piece) => {
     let moves = findFreeSpaces(piece.parentNode);
     whiteMoves += moves.move.length + moves.attack.length;
-    console.log("White Moves: ", whiteMoves);
   });
 
   // player runs out of moves
   redPieceEl.forEach((piece) => {
     let moves = findFreeSpaces(piece.parentNode);
     redMoves += moves.move.length + moves.attack.length;
-    console.log("red Moves: ", redMoves);
   });
 
   if (redPieceEl.length === 0) {
-    console.log("red lose");
     message = "Player 1 Won!";
     winner = true;
     return;
   } else {
     if (whitePieceEl.length === 0) {
-      console.log("white lose");
       message = "Player 2 Won!";
       winner = true;
       return;
@@ -208,13 +212,11 @@ function checkWin() {
   }
 
   if (whiteMoves === 0 && turn === 1) {
-    console.log("white lose");
     message = "Player 2 Won!";
     winner = true;
     return;
   } else {
     if (redMoves === 0 && turn === 2) {
-      console.log("red lose");
       message = "Player 1 Won!";
       winner = true;
       return;

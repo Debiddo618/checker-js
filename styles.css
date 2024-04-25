@@ -44,10 +44,33 @@ body{
     pointer-events: none;
 }
 
+
 .checker-piece.white{
     width: 100%;
     height:100%;
     background-color: white;
     border-radius: 50%;
     pointer-events: none;
+}
+
+.checker-piece.white.king{
+    width: 100%;
+    height: 100%;
+    background-color:white;
+    border-radius: 50%;
+    background-image: url("images/crown.svg");
+    background-repeat: no-repeat;
+    background-size:contain;
+    background-position: center center;
+}
+
+.checker-piece.red.king{
+    width: 100%;
+    height: 100%;
+    background-color:red;
+    border-radius: 50%;
+    background-image: url("images/crown.svg");
+    background-repeat: no-repeat;
+    background-size:contain;
+    background-position: center center;
 }
